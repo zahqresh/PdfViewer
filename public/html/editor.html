@@ -1,0 +1,80 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Editor</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+  <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/1.8.349/pdf.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" href="../css/editor.css">
+</head>
+
+<body onload="hideBtns()">
+  <!--Navr bar-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+
+
+
+      </ul>
+
+    </div>
+  </nav>
+  <!---->
+
+  <div class="container">
+    <div class="editor">
+      <div class="canvas-renderer text-center">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="pdf-upload">
+          <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+
+
+        <canvas id="the-canvas" class="canvas"></canvas>
+      </div>
+      <div class="btns">
+        <div class="btn btn-primary left" onclick="previous()">Previous</div>
+        <div class="btn btn-primary right" onclick="next()">Next</div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+  <script src="../js/editor.js"></script>
+  <script>
+    $("#pdf-upload").click(function () {
+      $(".custom-file").remove();
+      $(".btns").show();
+    });
+
+    function hideBtns(){
+      $('.btns').hide();
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+.btns{
+    display: flex;
+    justify-content: space-between;
+    margin-top: -9rem;
+}
+
+.custom-file{
+   margin-top: 1rem;
+}
