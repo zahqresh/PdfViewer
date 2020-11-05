@@ -2,7 +2,6 @@
 //current page/inital page will always be 1
 var current = 1;
 var url = undefined;
-
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
     //get the first ulpoaded file
@@ -28,6 +27,7 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
         LoadingTask.promise.then(function (pdf) {
             // you can now use *pdf* here
             pdf.getPage(current).then(function (page) {
+            
                 var scale = 1;
                 var viewport = page.getViewport({
                     scale: scale,
@@ -42,7 +42,33 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
                     canvasContext: context,
                     viewport: viewport
                 };
-                page.render(renderContext);
+                page.render(renderContext).promise.then(function() {
+                    // Returns a promise, on resolving it will return text contents of the page
+                    return page.getTextContent();
+                }).then(function(textContent) {
+                     // PDF canvas
+                    var pdf_canvas = $("#the-canvas"); 
+                
+                    // Canvas offset
+                    var canvas_offset = pdf_canvas.offset();
+                
+                    // Canvas height
+                    var canvas_height = pdf_canvas.get(0).height;
+                
+                    // Canvas width
+                    var canvas_width = pdf_canvas.get(0).width;
+                
+                    // Assign CSS to the text-layer element
+                    $("#text-layer").css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px', height: canvas_height + 'px', width: canvas_width + 'px' });
+                
+                    // Pass the data to the method for rendering of text over the pdf canvas.
+                    PDFJS.renderTextLayer({
+                        textContent: textContent,
+                        container: $("#text-layer").get(0),
+                        viewport: viewport,
+                        textDivs: []
+                    });
+                });
             });
 
         });
@@ -73,7 +99,33 @@ function render(){
                 canvasContext: context,
                 viewport: viewport
             };
-            page.render(renderContext);
+            page.render(renderContext).promise.then(function() {
+                // Returns a promise, on resolving it will return text contents of the page
+                return page.getTextContent();
+            }).then(function(textContent) {
+                 // PDF canvas
+                var pdf_canvas = $("#the-canvas"); 
+            
+                // Canvas offset
+                var canvas_offset = pdf_canvas.offset();
+            
+                // Canvas height
+                var canvas_height = pdf_canvas.get(0).height;
+            
+                // Canvas width
+                var canvas_width = pdf_canvas.get(0).width;
+            
+                // Assign CSS to the text-layer element
+                $("#text-layer").css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px', height: canvas_height + 'px', width: canvas_width + 'px' });
+            
+                // Pass the data to the method for rendering of text over the pdf canvas.
+                PDFJS.renderTextLayer({
+                    textContent: textContent,
+                    container: $("#text-layer").get(0),
+                    viewport: viewport,
+                    textDivs: []
+                });
+            });
         });
     }).catch(err => console.log(err.message));
 }
