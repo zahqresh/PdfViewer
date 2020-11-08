@@ -28,7 +28,7 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
             // you can now use *pdf* here
             pdf.getPage(current).then(function (page) {
             
-                var scale = 1;
+                var scale = 2;
                 var viewport = page.getViewport({
                     scale: scale,
                 });
