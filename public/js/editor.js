@@ -1,6 +1,7 @@
 //load the doc
-//current page/inital page will always be 1
-var current = 1;
+var currPage = 1; //Pages are 1-based not 0-based
+var numPages = 0;
+var thePDF = null;
 var url = undefined;
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
@@ -23,128 +24,81 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
         //save name/file content in global url var
         url = typedarray;
         //render the pdf
-        var LoadingTask = pdfjsLib.getDocument(typedarray);
-        LoadingTask.promise.then(function (pdf) {
-            // you can now use *pdf* here
-            pdf.getPage(current).then(function (page) {
-            
-                var scale = 2;
-                var viewport = page.getViewport({
-                    scale: scale,
-                });
+        PDFJS.getDocument(url)
+            .then(function (pdf) {
 
-                var canvas = document.getElementById('the-canvas');
-                var context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                // Get div#container and cache it for later use
+                var container = document.getElementById("container");
 
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                page.render(renderContext).promise.then(function() {
-                    // Returns a promise, on resolving it will return text contents of the page
-                    return page.getTextContent();
-                }).then(function(textContent) {
-                     // PDF canvas
-                    var pdf_canvas = $("#the-canvas"); 
-                
-                    // Canvas offset
-                    var canvas_offset = pdf_canvas.offset();
-                
-                    // Canvas height
-                    var canvas_height = pdf_canvas.get(0).height;
-                
-                    // Canvas width
-                    var canvas_width = pdf_canvas.get(0).width;
-                
-                    // Assign CSS to the text-layer element
-                    $("#text-layer").css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px', height: canvas_height + 'px', width: canvas_width + 'px' });
-                
-                    // Pass the data to the method for rendering of text over the pdf canvas.
-                    PDFJS.renderTextLayer({
-                        textContent: textContent,
-                        container: $("#text-layer").get(0),
-                        viewport: viewport,
-                        textDivs: []
+                // Loop from 1 to total_number_of_pages in PDF document
+                for (var i = 1; i <= pdf.numPages; i++) {
+
+                    // Get desired page
+                    pdf.getPage(i).then(function (page) {
+
+                        var scale = 1.5;
+                        var viewport = page.getViewport(scale);
+                        var div = document.createElement("div");
+
+                        // Set id attribute with page-#{pdf_page_number} format
+                        div.setAttribute("id", "page-" + (page.pageIndex + 1));
+
+                        // This will keep positions of child elements as per our needs
+                        div.setAttribute("style", "position: relative");
+
+                        // Append div within div#container
+                        container.appendChild(div);
+
+                        // Create a new Canvas element
+                        var canvas = document.createElement("canvas");
+
+                        // Append Canvas within div#page-#{pdf_page_number}
+                        div.appendChild(canvas);
+
+                        var context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        var renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+
+                        // Render PDF page
+                        page.render(renderContext)
+                            .then(function () {
+                                // Get text-fragments
+                                return page.getTextContent();
+                            })
+                            .then(function (textContent) {
+                                // Create div which will hold text-fragments
+                                var textLayerDiv = document.createElement("div");
+
+                                // Set it's class to textLayer which have required CSS styles
+                                textLayerDiv.setAttribute("class", "textLayer");
+
+                                // Append newly created div in `div#page-#{pdf_page_number}`
+                                div.appendChild(textLayerDiv);
+
+                                // Create new instance of TextLayerBuilder class
+                                var textLayer = new TextLayerBuilder({
+                                    textLayerDiv: textLayerDiv,
+                                    pageIndex: page.pageIndex,
+                                    viewport: viewport
+                                });
+
+                                // Set text-fragments
+                                textLayer.setTextContent(textContent);
+
+                                // Render text-fragments
+                                textLayer.render();
+                            });
                     });
-                });
+                }
             });
 
-        });
 
     };
-
     //read the file as a bufferarray
     fileReader.readAsArrayBuffer(file);
 })
-
-//render page based on number of page
-//load previous or next pages
-function render(){
-    var LoadingTask = pdfjsLib.getDocument(url);
-    LoadingTask.promise.then((pdf) => {
-        pdf.getPage(current).then(function (page) {
-            var scale = 1;
-            var viewport = page.getViewport({
-                scale: scale,
-            });
-
-            var canvas = document.getElementById('the-canvas');
-            var context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            var renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-            page.render(renderContext).promise.then(function() {
-                // Returns a promise, on resolving it will return text contents of the page
-                return page.getTextContent();
-            }).then(function(textContent) {
-                 // PDF canvas
-                var pdf_canvas = $("#the-canvas"); 
-            
-                // Canvas offset
-                var canvas_offset = pdf_canvas.offset();
-            
-                // Canvas height
-                var canvas_height = pdf_canvas.get(0).height;
-            
-                // Canvas width
-                var canvas_width = pdf_canvas.get(0).width;
-            
-                // Assign CSS to the text-layer element
-                $("#text-layer").css({ left: canvas_offset.left + 'px', top: canvas_offset.top + 'px', height: canvas_height + 'px', width: canvas_width + 'px' });
-            
-                // Pass the data to the method for rendering of text over the pdf canvas.
-                PDFJS.renderTextLayer({
-                    textContent: textContent,
-                    container: $("#text-layer").get(0),
-                    viewport: viewport,
-                    textDivs: []
-                });
-            });
-        });
-    }).catch(err => console.log(err.message));
-}
-
-//next page
-function next() {
-   if(current >= 1){
-    current++;
-    render();
-   }else{
-       return;
-   }
-}
-
-//previous page
-function previous() {
-    render();
-    current--;
-}
-
-
-
