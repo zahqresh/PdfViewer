@@ -1,6 +1,6 @@
 <!--Navr bar-->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">PDFANNOTATE</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky">
+    <a class="navbar-brand" href="/"><i class="fas fa-file-pdf"></i> PDFANNOTATE</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -8,10 +8,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <button class="btn btn-sm btn-dark" onclick="location.reload();">Reload</button>
+          <button class="btn btn-sm btn-dark" onclick="location.reload();"><i class="fas fa-redo-alt"></i> Reload</button>
+        </li>
+        <!-- <li class="nav-item active">
+          <button class="btn btn-sm btn-dark" class="download">Choose File</button>
+        </li> -->
+        <li class="nav-item active">
+          <button class="btn btn-sm btn-dark" id="zoom-in"><i class="fas fa-search-plus"></i> Zoom in</button>
         </li>
         <li class="nav-item active">
-          <button class="btn btn-sm btn-dark" class="download">Choose File</button>
+          <button class="btn btn-sm btn-dark" id="zoom-out"><i class="fas fa-search-minus"></i> Zoom out</button>
         </li>
       </ul>
     </div>

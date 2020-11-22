@@ -9,7 +9,20 @@
    margin-top: 1rem;
 }
 
+.sticky {
+    position: sticky;
+    top: .1px; /* When the element reaches top: 10px, it becomes fixed. */
+    z-index: 100;
+  }
 
 .navbar{
     position: sticky;
+}
+
+.container{
+    align-items: center;
+}
+
+.body{
+    background-color: black;
 }

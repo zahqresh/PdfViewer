@@ -1,6 +1,9 @@
 var file_name;
+var pdf_pages;
+let x = [];
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
+
   //get the first ulpoaded file
   var file = e.target.files[0]
   if (file.type != "application/pdf") {
@@ -25,13 +28,13 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
     //render the pdf
     PDFJS.getDocument(url)
       .then(function (pdf) {
-
         // Get div#container and cache it for later use
         var container = document.getElementById("container");
-        //pdffactory get current cords
-        
+        //Save total number of page to use in if-else and execute annotator when last txt layer renders
+        pdf_pages = pdf.numPages;
         // Loop from 1 to total_number_of_pages in PDF document
         for (var i = 1; i <= pdf.numPages; i++) {
+          
 
           // Get desired page
           pdf.getPage(i).then(function (page) {
@@ -69,6 +72,7 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
               .then(function () {
                 // Get text-fragments
                 return page.getTextContent();
+                
               })
               .then(function (textContent) {
                 // Create div which will hold text-fragments
@@ -92,41 +96,47 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
 
                 // Render text-fragments
                 textLayer.render();
+                //console.log(i);
+                
+                //push i of for loop into array because need to execute annotator when last text layer is render
+                //foor loop dont wait so this is how we determine the counter
+                x.push(i);
+               
+                //annotaorjs needs to be here and init while text layers are renderd
+                 
+                if(x.length == pdf_pages){
+                  var pageUri = function () {
+                    return {
+                        beforeAnnotationCreated: function (ann) {
+                            ann.uri = window.location.href;
+                        }
+                    };
+                };
+                
+                var app = new annotator.App()
+                    .include(annotator.ui.main, {element: document.body})
+                    .include(annotator.storage.http, {prefix: 'http://localhost:3000/api',
+                  urls:{
+                    create:`/annotations/${file_name}`,
+                    search:`/search/${file_name}`
+                  }
+                  })
+                    .include(pageUri);
+                
+                app.start()
+                   .then(function () {
+                       app.annotations.load({uri: window.location.href});
+                   });
+                }
+                
+                 //annotator ends here
               });
           });
+         
         }
-      
-      });
-
-
-       //Annotatorjs code
-       var pageUri = function () {
-        return {
-            beforeAnnotationCreated: function (ann) {
-                ann.uri = window.location.href;
-            }
-        };
-    };
-    
-    var app = new annotator.App()
-        .include(annotator.ui.main, {element: document.body})
-        .include(annotator.storage.http, {prefix: 'http://localhost:3000/api',
-      urls:{
-        create:`/annotations/${file_name}`,
-        search:`/search/${file_name}`
-      }
-      })
-        .include(pageUri);
-    
-    app.start()
-       .then(function () {
-           app.annotations.load({uri: window.location.href});
-       });
-  
-      //Annotator ends here
+      });  
   };
-
-
   //read the file as a bufferarray
   fileReader.readAsArrayBuffer(file);
 });
+
