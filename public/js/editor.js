@@ -1,3 +1,4 @@
+
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
   //get the first ulpoaded file
@@ -115,9 +116,10 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
         'limit': 20,
         'uri': 'http://localhost:3000/api/search'
       },
-      showViewPermissionsCheckbox:true
+      showViewPermissionsCheckbox:true,
+      showEditPermissionsCheckbox: true 
     });
-    content.data('annotator')
+    
         //Annotator ends here
       });
 

@@ -1,0 +1,50 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor</title>
+</head>
+
+<body>
+    <!--Scripts-->
+    <!--Boostrap jqeru and css-->
+    <link rel="stylesheet" href="/public/css/annotator.min.css" />
+    <script src="/public/js/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <!--Pdf txt layer and anontater scripts-->
+    <!--Anontator scripts-->
+    <link rel="stylesheet" href="/public/css/text_layer_builder.css">
+    <link rel="stylesheet" href="/public/css/editor.css">
+    <!---->
+    <%- include('./layouts/layout') -%>
+    <div class="container">
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="pdf-upload">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+        <div id="container"></div>
+    </div>
+
+    <!--Scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous">
+    </script>
+    <script src="/public/js/annotator-full.min.js"></script>
+    <script src="/public/js/annotator.offline.min.js"></script>
+    <script src="/public/js/pdf.js"></script>
+    <script src="/public/js/text_layer_builder.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.1/uuid.min.js"
+        integrity="sha512-4JH7nC4nSqPixxbhZCLETJ+DUfHa+Ggk90LETm25fi/SitneSvtxkcWAUujvYrgKgvrvwv4NDAsFgdwCS79Dcw=="
+        crossorigin="anonymous"></script>
+        <script src="/public/js/editor.js"></script>
+        <script src="/public/js/pdfAnnotate.js"></script>
+    <script>
+        $('.custom-file').click(function () {
+            $('.custom-file').hide();
+        });
+    </script>
+</body>
+
+</html>
