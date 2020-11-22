@@ -1,4 +1,4 @@
-
+var file_name;
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
   //get the first ulpoaded file
@@ -10,6 +10,9 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
       </div>`)
     return
   }
+
+  //getFile name
+  file_name = file.name;
 
   //load the filerLoader web api to read the file content stored on user computer
   var fileReader = new FileReader();
@@ -25,7 +28,8 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
 
         // Get div#container and cache it for later use
         var container = document.getElementById("container");
-
+        //pdffactory get current cords
+        
         // Loop from 1 to total_number_of_pages in PDF document
         for (var i = 1; i <= pdf.numPages; i++) {
 
@@ -91,41 +95,38 @@ document.querySelector("#pdf-upload").addEventListener("change", function (e) {
               });
           });
         }
-        //Annotatorjs code
-        var content = $('.container').annotator();
-    content.annotator('addPlugin', 'Store', {
-      // The endpoint of the store on your server.
-      prefix: 'http://localhost:3000/api',
-
-      // Attach the uri of the current page to all annotations to allow search.
-      // Attach the uri of the current page to all annotations to allow search.
-      annotationData: {
-        'uri': 'http://localhost:3000'
-      },
-      urls: {
-        // These are the default URLs.
-        create:  '/annotations',
-        update:  '/annotations/:id',
-        destroy: '/annotations/:id',
-        search:  '/search'
-      },
-      // This will perform a "search" action when the plugin loads. Will
-      // request the last 20 annotations for the current url.
-      // eg. /store/endpoint/search?limit=20&uri=http://this/document/only
-      loadFromSearch: {
-        'limit': 20,
-        'uri': 'http://localhost:3000/api/search'
-      },
-      showViewPermissionsCheckbox:true,
-      showEditPermissionsCheckbox: true 
-    });
-    
-        //Annotator ends here
+      
       });
 
 
-
+       //Annotatorjs code
+       var pageUri = function () {
+        return {
+            beforeAnnotationCreated: function (ann) {
+                ann.uri = window.location.href;
+            }
+        };
+    };
+    
+    var app = new annotator.App()
+        .include(annotator.ui.main, {element: document.body})
+        .include(annotator.storage.http, {prefix: 'http://localhost:3000/api',
+      urls:{
+        create:`/annotations/${file_name}`,
+        search:`/search/${file_name}`
+      }
+      })
+        .include(pageUri);
+    
+    app.start()
+       .then(function () {
+           app.annotations.load({uri: window.location.href});
+       });
+  
+      //Annotator ends here
   };
+
+
   //read the file as a bufferarray
   fileReader.readAsArrayBuffer(file);
 });

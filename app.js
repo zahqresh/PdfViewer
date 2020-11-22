@@ -2,23 +2,34 @@ const express = require('express')
 const app = express();
 const ejs = require('ejs');
 const port = 3000;
-const axios = require('axios');
+const db = require('./models/annotations');
+const mongoose = require('mongoose');
 const {
   v4: uuidv4
 } = require('uuid');
 var cors = require('cors')
 const path = require('path');
+const annotations = require('./models/annotations');
 var data = {};
 var rows = [];
-var total = [];
+var total = 0;
 //enable cors
-app.use(cors())
+app.use(cors());
 //serve static files
 app.use("/public", express.static(path.join(__dirname, 'public')));
 app.use(express.json())
 app.use(express.urlencoded({
   extended: true
 }))
+
+//setup db
+mongoose.connect('mongodb://localhost:27017/pdfviewer', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, () => {
+  console.log('DB connected!');
+});
+
 
 //setup view engine
 app.set('view engine', 'ejs');
@@ -35,84 +46,92 @@ app.get('/api/read', (req, res) => {
   res.json(data);
 })
 
-//Routes for annotations
-app.post('/api/annotations', (req, res) => {
-  console.log(req.params);
+//Routes for annotation
+
+//Create annotations
+app.post('/api/annotations/:name', (req, res) => {
+  //create a random id object for annotations
+  let id = uuidv4();
   const {
     qoute,
     ranges,
     text
   } = req.body;
-  res.json({
-    "id": "aa2edd3d-d6ca-48ad-93f5-fe2ecde302f0",
-    "ranges": [{
-      "start": "/div[2]/div[1]/div[1]/div[1]",
-      "startOffset": 1,
-      "end": "/div[2]/div[1]/div[1]/div[2]",
-      "endOffset": 13
-    }],
-    "text": "sd"
-  });
+  const{
+    name
+  } = req.params;
+  //create object
+  let annotObj = {
 
-  data = {
-
-    "id": uuidv4(),
+    "id": id,
     "quote": qoute,
     ranges: ranges,
     text: text
 
   };
-  console.log('in /api/annotations');
+//save annotation object and send the response to create annotation
+  db({
+    file_name:name,
+    rows:annotObj,
+    id:id
+  }).save().then(doc=>{
+    res.json(doc.rows);
+  })
 });
 
-//Routes for annotation
+//Apply all annotations when file is loaded
+app.get('/api/search/:name', (req, res) => {
+  const{
+    name
+  } = req.params;
 
-//somehow need to figure out how to load all the annoations once file has been loaded
-app.get('/api/search', (req, res) => {
-  res.send({total:1,
-    "row": [{
-      "id": "4518f09e-03ea-4ed8-b153-dbfafe29d072",
-      "ranges": [{
-        "start": "/div[2]/div[1]/div[1]/div[1]",
-        "startOffset": 0,
-        "end": "/div[2]/div[1]/div[1]/div[1]",
-        "endOffset": 132
-      }],
-      "text": "nice"
-    }]
-  });
-  console.log('in search');
+  db.find({file_name:name}).then(doc=>{
+    let annotations = [];
+    doc.forEach(n=>{
+      annotations.push(n.rows);
+    });
+    res.json({
+      total:doc.length,
+      rows:annotations
+    });
+  })
 });
+
 
 //Update one annotation
-app.put('/api/annotations/:id', (req, res) => {
+app.put('/api/annotations/:req_id', (req, res) => {
   const {
     qoute,
     ranges,
-    text
+    text,
+    id
   } = req.body;
-  res.json({
-    "id": uuidv4(),
+  
+  const{
+    req_id
+  } = req.params;
+
+ let annotObj = {
+    "id": id,
     "quote": qoute,
-    ranges: ranges,
+    ranges:ranges,
     text: text
-  });
-  console.log('in put');
+  };
+  db.findOneAndUpdate({id:req_id},{
+    rows:annotObj
+  }).then(doc=>{
+    res.json(annotObj);
+  })
 })
 //Delete one annotation
-app.delete('/api/annotations/:id', (req, res) => {
-  const {
-    qoute,
-    ranges,
-    text
-  } = req.body;
-  res.json({
-    "id": uuidv4(),
-    "quote": qoute,
-    ranges: ranges,
-    text: text
-  });
-  console.log('in delte');
+app.delete('/api/annotations/:req_id', (req, res) => {
+  const{
+    req_id
+  } = req.params;
+
+  db.findOneAndDelete({id:req_id}).then(()=>{
+    res.json(req.body);
+  })
 })
 
 
