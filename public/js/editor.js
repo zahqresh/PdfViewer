@@ -138,7 +138,7 @@ function renderPDF(url) {
                     element: document.body
                   })
                   .include(annotator.storage.http, {
-                    prefix: 'http://localhost:3000/api',
+                    prefix: 'https://pdfviewer101.herokuapp.com/api',
                     urls: {
                       create: `/annotations/${file_name}`,
                       search: `/search/${file_name}`
