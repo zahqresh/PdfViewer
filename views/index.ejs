@@ -6,7 +6,7 @@
     <title>PDF Editor</title>
 </head>
 
-<body>
+<body >
 
     <!--Scripts-->
     <!--Boostrap jqeru and css-->
@@ -46,14 +46,11 @@
         $('.custom-file').click(function () {
             $('.custom-file').hide();
         });
-        //zoom in
-        $('#zoom-in').click(() => {
-            
-        });
-        //zoom out
-        $('#zoom-out').click(() => {
+        document.getElementById('scale').addEventListener('change',()=>{
+            var val = $('#scale').val();
+            $('#pdf-upload').attr('data-scale',`${val}`)
           
-        })
+        });
     </script>
 </body>
 

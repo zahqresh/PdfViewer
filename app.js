@@ -23,7 +23,7 @@ app.use(express.urlencoded({
 }))
 
 //setup db
-mongoose.connect('mongodb://localhost:27017/pdfviewer', {
+mongoose.connect('mongodb+srv://hamza:hamza@cluster0-ho2sf.mongodb.net/pdfviewer', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, () => {
