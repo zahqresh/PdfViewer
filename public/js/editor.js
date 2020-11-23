@@ -1,7 +1,7 @@
 var file_name;
 var pdf_pages;
 let x = [];
-let scale_val;
+var scale_val;
 //add event listener to listen for any file upload
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
   //get the first ulpoaded file
@@ -60,7 +60,7 @@ function renderPDF(url){
      // Get desired page
      pdf.getPage(i).then(function (page) {
 
-       var scale = scale_val;
+       var scale = 1.5;
        var viewport = page.getViewport(scale);
        var div = document.createElement("div");
 

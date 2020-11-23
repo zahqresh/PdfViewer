@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express();
 const ejs = require('ejs');
-const port = 3000;
 const db = require('./models/annotations');
 const mongoose = require('mongoose');
 const {
