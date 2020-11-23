@@ -137,4 +137,8 @@ app.delete('/api/annotations/:req_id', (req, res) => {
 
 
 
-app.listen(port, () => console.log(`Example app listening on ${port} port!`))
+
+//Run the server
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server up on " + process.env.PORT);
+});
