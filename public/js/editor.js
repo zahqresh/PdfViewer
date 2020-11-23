@@ -6,7 +6,10 @@ let scale_val;
 document.querySelector("#pdf-upload").addEventListener("change", function (e) {
   //get the first ulpoaded file
   var file = e.target.files[0];
-  scale_val = $(this).attr("data-scale")
+  scale_val = $(this).attr("data-scale");
+  if(scale_val == 'undefined'){
+    scale_val = 1.5; //set default scale if somehow it fails
+  }
   if (file.type != "application/pdf") {
     console.error(file.name, "is not a pdf file.")
     $('.container').append(`<div class="alert alert-primary" role="alert">
@@ -57,7 +60,7 @@ function renderPDF(url){
      // Get desired page
      pdf.getPage(i).then(function (page) {
 
-       var scale = 1.5;
+       var scale = scale_val;
        var viewport = page.getViewport(scale);
        var div = document.createElement("div");
 
