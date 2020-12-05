@@ -22,7 +22,7 @@ app.use(express.urlencoded({
 }))
 
 //setup db
-mongoose.connect('mongodb+srv://hamza:hamza@cluster0-ho2sf.mongodb.net/pdfviewer', {
+mongoose.connect('mongodb://localhost:27017/pdfviewer', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, () => {
@@ -76,6 +76,7 @@ app.post('/api/annotations/:name', (req, res) => {
   }).save().then(doc=>{
     res.json(doc.rows);
   })
+  console.log(req.body);
 });
 
 //Apply all annotations when file is loaded

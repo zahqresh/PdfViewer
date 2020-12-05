@@ -31,3 +31,12 @@
                 50% 50% no-repeat rgb(249,249,249);
   }
 
+
+  .main{
+      display: flex;
+      justify-content: stretch;
+      align-items: center;
+      justify-content: space-evenly;
+  }
+
+
