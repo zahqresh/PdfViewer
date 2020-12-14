@@ -1,25 +1,36 @@
+* {
+    padding: 0;
+    margin: 0;
+}
 
-#btns{
+.container{
+    
+    height: 100%;
+    width: 40%;
+}
+
+#btns {
     display: flex;
     justify-content: space-between;
     margin-top: -9rem;
 }
 
-.custom-file{
-   margin-top: 1rem;
+.custom-file {
+    margin-top: 1rem;
 }
 
 .sticky {
     position: sticky;
-    top: .1px; /* When the element reaches top: 10px, it becomes fixed. */
+    top: .1px;
+    /* When the element reaches top: 10px, it becomes fixed. */
     z-index: 100;
-  }
+}
 
-.navbar{
+.navbar {
     position: sticky;
 }
 
-.loader{
+.loader {
     display: none;
     position: fixed;
     left: 0px;
@@ -27,16 +38,30 @@
     width: 100%;
     height: 100%;
     z-index: 1;
-    background: url('//upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phi_fenomeni.gif/50px-Phi_fenomeni.gif') 
-                50% 50% no-repeat rgb(249,249,249);
-  }
+    background: url('//upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phi_fenomeni.gif/50px-Phi_fenomeni.gif') 50% 50% no-repeat rgb(249, 249, 249);
+}
 
 
-  .main{
-      display: flex;
-      justify-content: stretch;
-      align-items: center;
-      justify-content: space-evenly;
-  }
+.main{
+    display: flex;
+    justify-content: space-evenly;
+}
 
+.right {
+    background-color: #f1f1f1;
+    border: none;
+    width: 20%;
+    
+}
 
+.left {
+    background-color: #f1f1f1;
+    border: none;
+    width: 20%;
+}
+
+.renderer{
+    flex-grow: 4;
+    margin: 10px;
+    z-index: 2;
+}

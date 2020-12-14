@@ -51,6 +51,7 @@ app.get('/api/read', (req, res) => {
 app.post('/api/annotations/:name', (req, res) => {
   //create a random id object for annotations
   let id = uuidv4();
+  console.log(req.body);
   const {
     qoute,
     ranges,
