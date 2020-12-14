@@ -31,7 +31,8 @@ document.getElementById('pdf-upload').onchange = function (event) {
             var scale = 1.5;
             var viewport = page.getViewport(scale);
             var div = document.createElement("div");
-
+            //show a loader while text layer renders
+            $('.loader').show();
             // Set id attribute with page-#{pdf_page_number} format
             div.setAttribute("id", "page-" + (page.pageIndex + 1));
 
@@ -90,31 +91,23 @@ document.getElementById('pdf-upload').onchange = function (event) {
                   //Start annotatorjs
 
 
-
-
-
                   var content = $('#container').annotator()
                   //User search bar
                   content.annotator('addPlugin', 'Filter', {
-                    filters: [
-                      {
-                        label: 'Quote',
-                        property: 'quote'
-                      }
-                    ]
+                    filters: [{
+                      label: 'Quote',
+                      property: 'quote'
+                    }]
                   });
                   //Tags plugin
                   content.annotator('addPlugin', 'Tags');
                   content.annotator('addPlugin', 'Store', {
                     // The endpoint of the store on your server.
-                    prefix: "https://pdfviewer101.herokuapp.com/api",
+                    prefix: "http://localhost:3000/api",
                     urls: {
                       create: `/annotations/${window.btoa(file_name)}`,
                       search: `/search/${window.btoa(file_name)}`
                     },
-
-                    
-
                     // This will perform a "search" action when the plugin loads. Will
                     // request the last 20 annotations for the current url.
                     // eg. /store/endpoint/search?limit=20&uri=http://this/document/only
@@ -122,57 +115,28 @@ document.getElementById('pdf-upload').onchange = function (event) {
                       'uri': `/search/${window.btoa(file_name)}`
                     }
                   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  // var pageUri = function () {
-                  //   return {
-                  //     beforeAnnotationCreated: function (ann) {
-                  //       ann.uri = window.location.href;
-                  //     }
-                  //   };
-                  // };
-
-                  // var app = new annotator.App()
-                  // app.include(annotator.ui.main, {
-                  //   editorExtensions: [annotator.ui.tags.editorExtension],
-                  //   viewerExtensions: [
-                  //     annotator.ui.markdown.viewerExtension,
-                  //     annotator.ui.tags.viewerExtension
-                  //   ]
-                  // });
-                  // app.include(annotator.storage.http, {
-                  //   prefix: "https://pdfviewer101.herokuapp.com/api",
-                  //   urls: {
-                  //     create: `/annotations/${window.btoa(file_name)}`,
-                  //     search: `/search/${window.btoa(file_name)}`
-                  //   }
-                  // })
-                  // app.include(pageUri);
-                  // app.start()
-                  //   .then(function () {
-                  //     app.annotations.load({
-                  //       uri: window.location.href
-                  //     });
-                  //   });
+                  //hide a loader while text layer renders completly
+                  $('.loader').hide();
                   //End Anotatorjs
+                  //Add annotations and tags on sidebars 
+                  axios.get(`/api/search/${window.btoa(file_name)}`)
+                    .then(response => {
+                      let {
+                        total,
+                        rows
+                      } = response.data;
+                      //create element that display total annotations
+                      $('.left').append(`<h6 class='annotationHeading'>${total} Annotations:</h6>`)
+                      $('.right').append(`<h6>Tags:</h6>`)
+                      //create element and add it to frontend
+                      for (let i = 0; i < rows.length; i++) {
+
+                        $('.left').append(`<p class='annotation'>${rows[i].text}</p>`)
+                        for (let x = 0; x < rows[i].tags.length; x++) {
+                          rows[i].tags[x] == undefined ? '' : $('.right').append(`<p class='tag'>${rows[i].tags[x]}</p>`);
+                        }
+                      }
+                    }).catch(err => console.log(err));
                 }
 
               });

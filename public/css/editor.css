@@ -19,16 +19,9 @@
     margin-top: 1rem;
 }
 
-.sticky {
-    position: sticky;
-    top: .1px;
-    /* When the element reaches top: 10px, it becomes fixed. */
-    z-index: 100;
-}
 
-.navbar {
-    position: sticky;
-}
+
+
 
 .loader {
     display: none;
@@ -44,24 +37,27 @@
 
 .main{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .right {
-    background-color: #f1f1f1;
-    border: none;
-    width: 20%;
+   
+    padding: 2rem;
     
 }
 
 .left {
-    background-color: #f1f1f1;
-    border: none;
-    width: 20%;
+    padding: 2rem;
 }
 
-.renderer{
-    flex-grow: 4;
-    margin: 10px;
-    z-index: 2;
+.custom-file-input{
+    width: 100%;
+}
+
+.annotation,.tag{
+    border-radius: 5%;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
 }

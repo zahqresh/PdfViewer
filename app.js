@@ -49,13 +49,14 @@ app.get('/api/read', (req, res) => {
 
 //Create annotations
 app.post('/api/annotations/:name', (req, res) => {
+
   //create a random id object for annotations
   let id = uuidv4();
-  console.log(req.body);
   const {
     qoute,
     ranges,
-    text
+    text,
+    tags
   } = req.body;
   const{
     name
@@ -66,8 +67,8 @@ app.post('/api/annotations/:name', (req, res) => {
     "id": id,
     "quote": qoute,
     ranges: ranges,
-    text: text
-
+    text: text,
+    tags:tags
   };
 //save annotation object and send the response to create annotation
   db({
@@ -76,8 +77,9 @@ app.post('/api/annotations/:name', (req, res) => {
     id:id
   }).save().then(doc=>{
     res.json(doc.rows);
+    console.log(req.body);
   })
-  console.log(req.body);
+ 
 });
 
 //Apply all annotations when file is loaded
@@ -105,7 +107,8 @@ app.put('/api/annotations/:req_id', (req, res) => {
     qoute,
     ranges,
     text,
-    id
+    id,
+    tags
   } = req.body;
   
   const{
@@ -116,7 +119,8 @@ app.put('/api/annotations/:req_id', (req, res) => {
     "id": id,
     "quote": qoute,
     ranges:ranges,
-    text: text
+    text: text,
+    tags:tags
   };
   db.findOneAndUpdate({id:req_id},{
     rows:annotObj
