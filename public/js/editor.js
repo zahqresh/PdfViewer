@@ -142,12 +142,9 @@ document.getElementById('pdf-upload').onchange = function (event) {
                           annotation.tags.length == 0 ? '' : $('.right').append(`<p class='tag ${annotation.quote}'>${annotation.tags}</p>`);
                           console.log(annotation.text);
                         })
-                        .subscribe("annotationUpdated", function (annotation) {
-                          $(`${annotation.text}`).html(`<div class='${annotation.text}'>${annotation.text}</div>`);
-                          //create a new tag
-                          annotation.tags.length == 0 ? '' : $('.right').append(`<p class='tag ${annotation.text}'>${annotation.tags}</p>`);
-                          console.log(annotation.text);
-                        })
+                        // .subscribe("annotationUpdated", function (annotation) {
+                        //   //after annotation updated
+                        // })
 
                         // DELETE
                         .subscribe("annotationDeleted", function (annotation) {

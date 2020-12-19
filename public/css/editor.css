@@ -41,13 +41,19 @@
 }
 
 .right {
-   
+   display: flex;
+   flex-direction: column;
+   flex-wrap: wrap;
     padding: 2rem;
     
 }
 
 .left {
+    display: flex;
+   flex-wrap: wrap;
+   flex-direction: column;
     padding: 2rem;
+
 }
 
 .custom-file-input{
@@ -56,8 +62,9 @@
 
 .annotation,.tag{
     border-radius: 5%;
+    border: #343a40 1px solid;
+    text-align: center;
+    padding: 5px;
     background-color: #343a40;
     color: white;
-    text-align: center;
-    padding: 10px;
 }
