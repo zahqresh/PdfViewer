@@ -4,8 +4,6 @@ var url,
   totalPages,
   UUID;
 document.getElementById('pdf-upload').onchange = function (event) {
-
-
   var file = event.target.files[0];
   file_name = file.name;
   //Read the file locally using file reader
@@ -90,8 +88,118 @@ document.getElementById('pdf-upload').onchange = function (event) {
                 if (Pages.length + 1 == totalPages) {
                   //Start annotatorjs
 
+                  //custom module
+                  Annotator.Plugin.annotationCreation = function (element, options) {
+                    var myPlugin = {};
+                    myPlugin.pluginInit = function () {
+                      // This annotator instance
+                      this.annotator
+                        // LOADING
+                        .subscribe("annotationsLoaded", function (annotations) {
+                          console.log("annotationsLoaded called when the annotations have been loaded.");
+
+                          //create element that display total annotations
+                          $('.left').append(`<h6 class='annotationHeading'><span class='annotation_number'>${annotations.length}</span> Annotations:</h6>`)
+                          $('.right').append(`<h6>Tags:</h6>`)
+                          //create element and add it to frontend
+                          for (let i = 0; i < annotations.length; i++) {
+
+                            $('.left').append(`<p class='annotation ${annotations[i].quote}'>${annotations[i].text}</p>`)
+                            for (let x = 0; x < annotations[i].tags.length; x++) {
+                              console.log(annotations[i].id);
+                              annotations[i].tags[x] == undefined ? '' : $('.right').append(`<p class='tag ${annotations[i].quote}'>${annotations[i].tags[x]}</p>`);
+                            }
+                          }
+                        })
+
+                        // // CREATE
+                        // .subscribe("beforeAnnotationCreated", function (annotation) {
+                        //   console.log("beforeAnnotationCreated called immediately before an annotation is created. If you need to modify the annotation before it is saved use this event.");
+                        //   console.log(annotation);
+                        // })
+                        .subscribe("annotationCreated", function (annotation) {
+                          //console.log("annotationCreated called when the annotation is created use this to store the annotations.");
+
+                          
+                          //create a new annotation
+                          $('.left').append(`<p  class='annotation ${annotation.quote}'>${annotation.text}</p>`)
+                          //create a new tag
+                          annotation.tags.length == 0 ? '' : $('.right').append(`<p class='tag ${annotation.quote}'>${annotation.tags}</p>`);
+
+                          //update annotation length object
+                          let counter = Number($('.annotation_number').text()) + 1;
+                          //create element that display total annotations
+                          document.getElementsByClassName('annotation_number')[0].innerText = `${counter}`
+
+                        })
+
+                        //UPDATE
+                        .subscribe("beforeAnnotationUpdated", function (annotation) {
+                          //console.log("beforeAnnotationUpdated as annotationCreated, but just before an existing annotation is saved.");
+                          //console.log(annotation);
+                          $(`.${annotation.quote}`).html(`<div class='${annotation.quote}'>${annotation.text}</div>`);
+                          //create a new tag
+                          annotation.tags.length == 0 ? '' : $('.right').append(`<p class='tag ${annotation.quote}'>${annotation.tags}</p>`);
+                          console.log(annotation.text);
+                        })
+                        .subscribe("annotationUpdated", function (annotation) {
+                          $(`${annotation.text}`).html(`<div class='${annotation.text}'>${annotation.text}</div>`);
+                          //create a new tag
+                          annotation.tags.length == 0 ? '' : $('.right').append(`<p class='tag ${annotation.text}'>${annotation.tags}</p>`);
+                          console.log(annotation.text);
+                        })
+
+                        // DELETE
+                        .subscribe("annotationDeleted", function (annotation) {
+                          //hide annotation
+                          $(`.${annotation.quote}`).hide();
+                          //update annotation length object
+                          let counter = Number($('.annotation_number').text()) - 1;
+                          //create element that display total annotations
+                          document.getElementsByClassName('annotation_number')[0].innerText = `${counter}`
+                        })
+
+                      // VIEWER
+                      // .subscribe("annotationViewerShown", function (viewer, annotations) {
+                      //   console.log("annotationViewerShown called when the annotation viewer is shown and provides the annotations being displayed.");
+                      //   console.log(viewer);
+                      //   console.log(annotations);
+                      // })
+                      // .subscribe("annotationViewerTextField", function (field, annotation) {
+                      //   console.log("annotationViewerTextField called when the text field displaying the annotation comment in the viewer is created.");
+                      //   console.log(field);
+                      //   console.log(annotation);
+                      // })
+
+                      // EDITOR
+                      // .subscribe("annotationEditorShown", function (editor, annotation) {
+                      //   console.log("annotationEditorShown called when the annotation editor is presented to the user.");
+                      //   console.log(editor);
+                      //   console.log(annotation);
+                      // })
+                      // .subscribe("annotationEditorHidden", function (editor) {
+                      //   console.log("annotationEditorHidden called when the annotation editor is hidden, both when submitted and when editing is cancelled.");
+                      //   console.log(editor);
+                      // })
+                      // .subscribe("annotationEditorSubmit", function (editor, annotation) {
+                      //   console.log("annotationEditorSubmit called when the annotation editor is submitted.");
+                      //   console.log(editor);
+                      //   console.log(annotation);
+                      // })
+
+
+                    };
+                    return myPlugin;
+                  };
+
+
+
 
                   var content = $('#container').annotator()
+
+                  // Add your plugin.
+                  content.annotator('addPlugin', 'annotationCreation' /*, any other options */ );
+
                   //User search bar
                   content.annotator('addPlugin', 'Filter', {
                     filters: [{
@@ -119,24 +227,24 @@ document.getElementById('pdf-upload').onchange = function (event) {
                   $('.loader').hide();
                   //End Anotatorjs
                   //Add annotations and tags on sidebars 
-                  axios.get(`/api/search/${window.btoa(file_name)}`)
-                    .then(response => {
-                      let {
-                        total,
-                        rows
-                      } = response.data;
-                      //create element that display total annotations
-                      $('.left').append(`<h6 class='annotationHeading'>${total} Annotations:</h6>`)
-                      $('.right').append(`<h6>Tags:</h6>`)
-                      //create element and add it to frontend
-                      for (let i = 0; i < rows.length; i++) {
+                  // axios.get(`/api/search/${window.btoa(file_name)}`)
+                  //   .then(response => {
+                  //     let {
+                  //       total,
+                  //       rows
+                  //     } = response.data;
+                  //     //create element that display total annotations
+                  //     $('.left').append(`<h6 class='annotationHeading'>${total} Annotations:</h6>`)
+                  //     $('.right').append(`<h6>Tags:</h6>`)
+                  //     //create element and add it to frontend
+                  //     for (let i = 0; i < rows.length; i++) {
 
-                        $('.left').append(`<p class='annotation'>${rows[i].text}</p>`)
-                        for (let x = 0; x < rows[i].tags.length; x++) {
-                          rows[i].tags[x] == undefined ? '' : $('.right').append(`<p class='tag'>${rows[i].tags[x]}</p>`);
-                        }
-                      }
-                    }).catch(err => console.log(err));
+                  //       $('.left').append(`<p class='annotation'>${rows[i].text}</p>`)
+                  //       for (let x = 0; x < rows[i].tags.length; x++) {
+                  //         rows[i].tags[x] == undefined ? '' : $('.right').append(`<p class='tag'>${rows[i].tags[x]}</p>`);
+                  //       }
+                  //     }
+                  //   }).catch(err => console.log(err));
                 }
 
               });
